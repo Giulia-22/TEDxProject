@@ -73,18 +73,18 @@ tedx_dataset_agg.printSchema()
 watchnext_dataset_path = "s3://tcm-tedx-mf99-dati/watch_next_dataset.csv"
 watchnext_dataset = spark.read.option("header","true").csv(watchnext_dataset_path)
 
+## FILTER WATCHNEXT DATASET
+watchnext_dataset = watchnext_dataset.dropDuplicates()
+watchnext_dataset = watchnext_dataset.filter('url LIKE "https://www.ted.com/talks/%"')
 
-
-# CREATE THE AGGREGATE MODEL, ADD WATCHNEXT TO TEDX+TAGS DATASET
-watchnext_dataset_agg = watchnext_dataset.groupBy(col("idx").alias("idx_ref"),col("url").alias("url_ref")).agg(collect_list("watch_next_idx").alias("watch_next_idx_ref"))
+## CREATE THE AGGREGATE MODEL, ADD WATCHNEXT TO TEDX+TAGS DATASET
+watchnext_dataset_agg = watchnext_dataset.groupBy(col("idx").alias("idx_ref_watchnext")).agg(collect_list("url").alias("url_watchnext"), collect_list("watch_next_idx").alias("watch_next_idx_watchnext"))
 watchnext_dataset_agg.printSchema()
-tedx_dataset_agg = tedx_dataset_agg.join(watchnext_dataset_agg, tedx_dataset_agg._id == watchnext_dataset_agg.idx_ref, "left") \
-    .drop("idx_ref") \
-    .select(col("_id").alias("_idx"), col("*")) \
-    .drop("_id") \
+tedx_dataset_agg = tedx_dataset_agg.join(watchnext_dataset_agg, tedx_dataset_agg._id == watchnext_dataset_agg \
+    .idx_ref_watchnext, "left") \
+    .drop("idx_ref_watchnext")
 
 tedx_dataset_agg.printSchema()
-
 
 
 
