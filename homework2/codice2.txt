@@ -86,7 +86,24 @@ tedx_dataset_agg = tedx_dataset_agg.join(watchnext_dataset_agg, tedx_dataset_agg
 
 tedx_dataset_agg.printSchema()
 
+## ADD PERCENTAGE 
+## !! DA QUI NON TESTATO
 
+## READ CS DATASET
+cs_dataset_path = "s3://tcm-tedx-mf99-dati/tedx_cs_dataset.csv"
+cs_dataset = spark.read.option("header","true").csv(cs_dataset_path)
+
+## CREATE THE AGGREGATE MODEL, ADD CS DATASET
+# forse la parte di aggregazione non ci serve (?)
+cs_dataset_agg = cs_dataset.groupBy(col("idx").alias("idx_ref_cs")).agg(collect_list("gradimento").alias("cs_percentage"))
+cs_dataset_agg.printSchema()
+tedx_dataset_agg = tedx_dataset_agg.join(cs_dataset_agg, tedx_dataset_agg._id == cs_dataset_agg \
+    .idx_ref_cs, "left") \
+    .drop("idx_ref_cs")
+
+tedx_dataset_agg.printSchema()
+
+## FINO A QUI !!!
 
 mongo_uri = "mongodb+srv://mfanton1:mfanton1@mycluster.jm49ir6.mongodb.net"
 print(mongo_uri)
