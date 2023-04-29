@@ -76,7 +76,7 @@ watchnext_dataset = spark.read.option("header","true").csv(watchnext_dataset_pat
 
 
 # CREATE THE AGGREGATE MODEL, ADD WATCHNEXT TO TEDX+TAGS DATASET
-watchnext_dataset_agg = watchnext_dataset.groupBy(col("idx").alias("idx_ref")).agg([collect_list("url").alias("url_ref"),collect_list("watch_next_idx").alias("watch_next_idx_ref")])
+watchnext_dataset_agg = watchnext_dataset.groupBy(col("idx").alias("idx_ref"),col("url").alias("url_ref")).agg(collect_list("watch_next_idx").alias("watch_next_idx_ref"))
 watchnext_dataset_agg.printSchema()
 tedx_dataset_agg = tedx_dataset_agg.join(watchnext_dataset_agg, tedx_dataset_agg._id == watchnext_dataset_agg.idx_ref, "left") \
     .drop("idx_ref") \
