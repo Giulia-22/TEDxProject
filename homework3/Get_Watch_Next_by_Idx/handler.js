@@ -20,13 +20,6 @@ module.exports.get_watch_next = (event, context, callback) => {
         })
     }
     
-    if (!body.doc_per_page) {
-        body.doc_per_page = 10
-    }
-    if (!body.page) {
-        body.page = 1
-    }
-    
     connect_to_db().then(() => {
         console.log('=> get_all talks');
         var i = 0;
