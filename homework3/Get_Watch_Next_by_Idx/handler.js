@@ -32,8 +32,6 @@ module.exports.get_watch_next = (event, context, callback) => {
         var i = 0;
         var t = new Array();
         watch_next_talk.find({_id: body.id})
-            .skip((body.doc_per_page * body.page) - body.doc_per_page)
-            .limit(body.doc_per_page)
             .then(talks1 => {
                 for(i=0;i<6;i++)
                 {
