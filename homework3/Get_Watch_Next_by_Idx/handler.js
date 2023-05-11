@@ -26,14 +26,7 @@ module.exports.get_watch_next = (event, context, callback) => {
         var t = new Array();
         watch_next_talk.find({_id: body.id})
             .then(talks1 => {
-                for(i=0;i<6;i++)
-                {
-                    t[i] = {
-                        "wn_id" : talks1[0].watchnext_struct[i].watch_next_idx_watchnext,
-                        "wn_url" : talks1[0].watchnext_struct[i].url_watchnext,
-                        "wn_gradimento" : talks1[0].watchnext_struct[i].gradimento // da mod con array
-                    }
-                }
+                t = talks1[0].watchnext_struct;
                 t.sort(confrontoPerPerc);
                     callback(null, {
                         statusCode: 200,
@@ -52,10 +45,10 @@ module.exports.get_watch_next = (event, context, callback) => {
 };
 // Ordinamento talk per percentuale di gradimento decrescente 
 function confrontoPerPerc(a, b) {
-  if (a.wn_gradimento < b.wn_gradimento) {
+  if (a.gradimento < b.gradimento) {
     return 1;
   }
-  if (a.wn_gradimento > b.wn_gradimento) {
+  if (a.gradimento > b.gradimento) {
     return -1;
   }
   return 0;
